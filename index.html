@@ -54,6 +54,11 @@
             background-color: var(--bg-primary);
             color: var(--text-primary);
             margin: 0;
+            /* Protection: Disable Text Selection */
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
         }
 
         /* Arabic Font Support */
@@ -203,6 +208,9 @@
             background: rgba(0,0,0,0.2);
             transition: transform 0.3s ease;
             pointer-events: none;
+            /* Protection: Disable Image Dragging */
+            -webkit-user-drag: none;
+            user-drag: none;
         }
         .item:hover img {
             transform: scale(1.05);
@@ -843,6 +851,25 @@ referrerPolicy="no-referrer-when-downgrade"></a></div></noscript>
                 document.body.style.overflow = 'auto';
             }
         })();
+    </script>
+    
+    <!-- Protection Script -->
+    <script type="text/javascript">
+        // Disable Right Click
+        document.addEventListener('contextmenu', event => event.preventDefault());
+
+        // Disable Key Shortcuts (F12, Ctrl+U, Ctrl+Shift+I, Ctrl+S)
+        document.onkeydown = function(e) {
+            if (e.keyCode == 123) return false; // F12
+            if (e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) return false; // Ctrl+Shift+I
+            if (e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)) return false; // Ctrl+Shift+C
+            if (e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) return false; // Ctrl+Shift+J
+            if (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) return false; // Ctrl+U
+            if (e.ctrlKey && e.keyCode == 'S'.charCodeAt(0)) return false; // Ctrl+S
+        }
+        
+        // Disable Dragging Images
+        document.ondragstart = function() { return false; };
     </script>
 </body>
 </html>
