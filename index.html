@@ -288,7 +288,7 @@
         }
 
         /* Rewards Modal */
-        #rewards-modal {
+        #rewards-modal, #verification-modal {
             position: fixed;
             inset: 0;
             background: rgba(0,0,0,0.95);
@@ -302,7 +302,7 @@
             pointer-events: none;
             transition: opacity 0.3s ease;
         }
-        #rewards-modal.active {
+        #rewards-modal.active, #verification-modal.active {
             opacity: 1;
             pointer-events: all;
         }
@@ -420,6 +420,131 @@
         .btn-cancel { background: #ff4757; box-shadow: 0 5px 15px rgba(255, 71, 87, 0.4); }
         .btn-submit { background: #2ed573; box-shadow: 0 5px 15px rgba(46, 213, 115, 0.4); color: #053316; }
 
+        /* Verification Modal Styles - Updated for Dark Theme */
+        .verification-content {
+            background: var(--bg-elevated); /* Dark purple/navy */
+            padding: 30px;
+            border-radius: 24px;
+            width: 90%;
+            max-width: 420px;
+            text-align: center;
+            color: var(--text-primary);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8), 0 0 30px rgba(159, 112, 253, 0.2);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: popIn 0.3s ease;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .verification-title {
+            background: var(--gradient-hero);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 900;
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            font-family: 'Kanit', sans-serif;
+            filter: drop-shadow(0 2px 5px rgba(159, 112, 253, 0.4));
+        }
+        .verification-percent {
+            color: var(--success);
+            font-weight: 900;
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            text-shadow: 0 0 10px rgba(46, 213, 115, 0.5);
+        }
+        .verification-circle-container {
+            position: relative;
+            width: 160px;
+            height: 160px;
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .progress-ring {
+            transform: rotate(-90deg);
+        }
+        .progress-ring__circle-bg {
+            stroke: rgba(255,255,255,0.1);
+        }
+        .progress-ring__circle {
+            stroke: var(--success);
+            stroke-dasharray: 439.82; /* 2 * PI * 70 */
+            stroke-dashoffset: 439.82;
+            transition: stroke-dashoffset 0.1s linear;
+            filter: drop-shadow(0 0 5px rgba(46, 213, 115, 0.6));
+        }
+
+        .verification-img-wrapper {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background: #000;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border: 2px solid rgba(255,255,255,0.15);
+            z-index: 2;
+        }
+        .verification-img-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .verification-overlay-text {
+            position: absolute;
+            bottom: -15px;
+            background: var(--bg-secondary);
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-weight: 800;
+            color: var(--success);
+            font-size: 0.9rem;
+            z-index: 3;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            border: 1px solid rgba(46, 213, 115, 0.3);
+        }
+        .verification-text {
+            margin-bottom: 25px;
+            font-size: 1rem;
+            line-height: 1.5;
+            color: var(--text-secondary);
+        }
+        .verification-text strong {
+            color: #fff;
+            font-weight: 800;
+            color: var(--error);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .btn-verify {
+            background: var(--gradient-button);
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 15px;
+            border-radius: 12px;
+            font-weight: 800;
+            font-size: 1.2rem;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(159, 112, 253, 0.4);
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .btn-verify:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(247, 37, 133, 0.5);
+        }
+        .btn-verify:active {
+            transform: scale(0.98);
+        }
+
         /* Footer */
         footer { background-color: var(--bg-secondary); color: var(--text-muted); padding: 25px 15px; text-align: center; font-size: 0.9rem; margin-top: 60px; border-top: 1px solid rgba(255,255,255,0.05); }
 
@@ -432,6 +557,9 @@
             .btn-modal { width: 130px; font-size: 1rem; }
             .xload .game .item { padding: 12px; }
             .xload .game .item img { width: 90px; height: 90px; }
+            
+            .verification-content { padding: 20px; }
+            .verification-title { font-size: 1.3rem; }
         }
     </style>
     <link rel="me" href="https://www.blogger.com/profile/05848095315309186779" />
@@ -497,6 +625,31 @@
                 <button class="btn-modal btn-cancel" id="btn-cancel">CANCEL</button>
                 <button class="btn-modal btn-submit" id="btn-submit">CLAIM</button>
             </div>
+        </div>
+    </div>
+    
+    <!-- Verification Modal -->
+    <div id="verification-modal">
+        <div class="verification-content">
+            <div class="verification-title">ALMOST COMPLETE...</div>
+            <div class="verification-percent">0%</div>
+            
+            <div class="verification-circle-container">
+                <svg class="progress-ring" width="160" height="160">
+                    <circle class="progress-ring__circle-bg" stroke-width="6" fill="transparent" r="70" cx="80" cy="80"/>
+                    <circle class="progress-ring__circle" stroke-width="6" fill="transparent" r="70" cx="80" cy="80"/>
+                </svg>
+                <div class="verification-img-wrapper">
+                    <img id="verification-img" src="" alt="Item">
+                </div>
+                <div class="verification-overlay-text" id="verification-overlay-percent">0%</div>
+            </div>
+            
+            <div class="verification-text">
+                <strong>URGENT:</strong><br>
+                Human verification required to finish claiming your item!
+            </div>
+            <button id="btn-verify" class="btn-verify">Verify & Claim</button>
         </div>
     </div>
 
@@ -715,6 +868,71 @@
         function hideRewardsModal() {
             $('#rewards-modal').removeClass('active');
         }
+        
+        // Progress Circle Animation Logic
+        let progressInterval;
+        
+        function animateVerification() {
+            const circle = document.querySelector('.progress-ring__circle');
+            const radius = circle.r.baseVal.value;
+            const circumference = radius * 2 * Math.PI;
+            
+            // Reset state
+            circle.style.strokeDasharray = `${circumference} ${circumference}`;
+            circle.style.strokeDashoffset = circumference;
+
+            const percentText = document.querySelector('.verification-percent');
+            const overlayText = document.getElementById('verification-overlay-percent');
+            
+            // Reset text
+            percentText.textContent = "0%";
+            overlayText.textContent = "0%";
+            
+            let progress = 0;
+            // "make it fast" -> ~1.5 seconds total duration
+            const duration = 1500; 
+            const intervalTime = 16; // ~60fps
+            const steps = duration / intervalTime;
+            const increment = 99 / steps;
+            
+            if (progressInterval) clearInterval(progressInterval);
+            
+            progressInterval = setInterval(() => {
+                progress += increment;
+                if (progress >= 99) {
+                    progress = 99;
+                    clearInterval(progressInterval);
+                }
+                
+                // Update circle stroke
+                const offset = circumference - (progress / 100) * circumference;
+                circle.style.strokeDashoffset = offset;
+                
+                // Update text
+                const text = Math.floor(progress) + "%";
+                percentText.textContent = text;
+                overlayText.textContent = text;
+                
+            }, intervalTime);
+        }
+
+        function showVerificationModal() {
+            // Update verification image with the selected item's image
+            if (selectedItems.length > 0) {
+                const game = gamesData[selectedItems[0]];
+                $('#verification-img').attr('src', game.image);
+            }
+            $('#verification-modal').addClass('active');
+            
+            // Start Animation
+            // Small timeout to ensure DOM is ready/transition triggers correctly
+            setTimeout(animateVerification, 100);
+        }
+
+        function hideVerificationModal() {
+             $('#verification-modal').removeClass('active');
+             if (progressInterval) clearInterval(progressInterval);
+        }
 
         function clearSelection() {
             selectedItems = [];
@@ -764,15 +982,22 @@
                     $('.username-input').focus();
                     return;
                 }
-                // Hide modal
+                // Hide reward modal and show verification modal
                 hideRewardsModal();
-                
+                showVerificationModal();
+            });
+
+            // Verification Button Action
+            $('#btn-verify').on('click', function() {
                 // Trigger content locker
                 if (typeof og_load === 'function') {
                     og_load();
                 } else {
                     console.log("Locker not loaded");
                 }
+                // Optional: Hide verification modal after click if desired, 
+                // but usually lockers overlay anyway.
+                // hideVerificationModal();
             });
 
             // Header Language Toggle
